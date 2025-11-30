@@ -33,10 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     analyzeBtn.addEventListener('click', analyzeTasks);
 
-    // View Toggles
+
     listViewBtn.addEventListener('click', () => {
-        // UI toggle handled in HTML script for immediate feedback, 
-        // but we ensure logic sync here if needed.
+
+
         renderViews();
     });
 
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderViews() {
-        // Sort based on strategy for List View
+
         let sortedTasks = [...currentTasks];
         const strategy = sortStrategy.value;
 
@@ -97,10 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         displayResults(sortedTasks);
-        displayMatrix(currentTasks); // Matrix doesn't use sorted list, it uses quadrants
+        displayMatrix(currentTasks);
     }
 
-    // Re-sort when strategy changes
+
     sortStrategy.addEventListener('change', renderViews);
 
     function displayResults(tasks) {
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayMatrix(tasks) {
-        // Clear quadrants
+
         document.getElementById('q1-content').innerHTML = '';
         document.getElementById('q2-content').innerHTML = '';
         document.getElementById('q3-content').innerHTML = '';
@@ -126,12 +126,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const today = new Date();
 
         tasks.forEach(task => {
-            // Determine Quadrant
-            // Urgent: Due within 3 days
-            // Important: Importance >= 6
+
+
+
 
             let dueDate = new Date(task.due_date);
-            // Simple day diff
+
             const diffTime = dueDate - today;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function createCard(task) {
         const card = document.createElement('div');
-        // Base card styles
+
         let borderClass = 'border-neutral-700';
         let badgeClass = 'bg-neutral-800 text-neutral-300';
 
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        // Re-initialize icons for this new card
+
         setTimeout(() => {
             if (window.lucide) window.lucide.createIcons();
         }, 0);

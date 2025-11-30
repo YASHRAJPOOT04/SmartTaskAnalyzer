@@ -11,18 +11,18 @@ def analyze_tasks(request):
         try:
             tasks = json.loads(request.body)
             
-            # 1. Calculate base scores
+
             for task in tasks:
                 task['score'] = calculate_task_score(task)
-                # Ensure ID exists for dependency check logic, default to None if missing
+
                 if 'id' not in task:
                     task['id'] = None
             
-            # 2. Dependency Logic
-            # Map task IDs to their objects for easy lookup
+
+
             task_map = {t.get('id'): t for t in tasks if t.get('id') is not None}
             
-            # Build Adjacency List for Cycle Detection & Blocker Counting
+
             graph = {}
             dependency_counts = {}
             
@@ -30,15 +30,15 @@ def analyze_tasks(request):
                 t_id = task.get('id')
                 deps = task.get('dependencies', [])
                 
-                # For blocker counting (who depends on me?)
+
                 for dep_id in deps:
                     dependency_counts[dep_id] = dependency_counts.get(dep_id, 0) + 1
                 
-                # For cycle detection (who do I depend on?)
+
                 if t_id is not None:
                     graph[t_id] = deps
 
-            # Detect Cycles using DFS
+
             visited = set()
             recursion_stack = set()
             cycles = set()
@@ -52,7 +52,7 @@ def analyze_tasks(request):
                         if dfs(neighbor):
                             return True
                     elif neighbor in recursion_stack:
-                        cycles.add(node) # Mark node as part of cycle
+                        cycles.add(node)
                         return True
                 
                 recursion_stack.remove(node)
@@ -62,18 +62,18 @@ def analyze_tasks(request):
                 if t_id not in visited:
                     dfs(t_id)
 
-            # Boost score for blockers & Flag cycles
+
             for task in tasks:
                 task_id = task.get('id')
                 explanation_parts = []
                 
-                # Cycle Check
+
                 if task_id in cycles:
                     task['has_circular_dependency'] = True
-                    task['score'] = -100 # Penalize or flag specifically
+                    task['score'] = -100
                     explanation_parts.append("⚠️ CIRCULAR DEPENDENCY DETECTED!")
                 
-                # Blocker Boost
+
                 if task_id is not None and task_id in dependency_counts:
                     boost = dependency_counts[task_id] * 10
                     task['score'] += boost
@@ -84,7 +84,7 @@ def analyze_tasks(request):
                     
                 task['explanation'] = f"Base Score: {task['score']}. " + " ".join(explanation_parts)
 
-            # Sort by score descending
+
             sorted_tasks = sorted(tasks, key=lambda x: x['score'], reverse=True)
             
             return JsonResponse(sorted_tasks, safe=False)
@@ -93,7 +93,7 @@ def analyze_tasks(request):
     return JsonResponse({'error': 'Only POST allowed'}, status=405)
 
 def suggest_tasks(request):
-    # Fetch tasks from DB
+
     db_tasks = Task.objects.all()
     tasks_data = []
     for t in db_tasks:
@@ -112,7 +112,7 @@ def suggest_tasks(request):
         t['score'] = score
         scored_tasks.append(t)
         
-    # Sort
+
     scored_tasks.sort(key=lambda x: x['score'], reverse=True)
     
     top_3 = scored_tasks[:3]
