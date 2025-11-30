@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Smart Task Analyzer</title>
+    <!-- Inter font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet">
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom scrollbar to match the theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        body {
+            background-color: #050505;
+        }
+    </style>
+</head>
+
+<body class="bg-[#050505] text-neutral-200 antialiased"
+    style="font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;">
+
+    <!-- Subtle Background Gradient -->
+    <div class="fixed inset-0 -z-10">
+        <div class="absolute inset-0 bg-gradient-to-b from-neutral-900/20 to-black"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-4 border-b border-white/5">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-emerald-500/10 p-2 rounded-lg border border-emerald-500/20">
+                    <i data-lucide="activity" class="w-6 h-6 text-emerald-400"></i>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight text-white">Smart Task Analyzer</h1>
+            </div>
+            <div class="hidden sm:flex items-center gap-4 text-sm text-neutral-500">
+                <span>v1.0.0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- App Interface -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 mt-8 pb-20">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Left Panel: Input -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="rounded-2xl ring-1 ring-white/10 bg-white/5 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                            Input Tasks
+                        </h2>
+                        <div class="flex gap-2">
+                            <button id="loadSampleBtn"
+                                class="text-xs bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white px-3 py-1.5 rounded-md transition-colors border border-white/5">Load
+                                Sample</button>
+                            <button id="clearBtn"
+                                class="text-xs bg-white/5 hover:bg-red-500/10 text-neutral-300 hover:text-red-400 px-3 py-1.5 rounded-md transition-colors border border-white/5">Clear</button>
+                        </div>
+                    </div>
+
+                    <textarea id="taskInput"
+                        class="w-full h-64 bg-black/30 border border-white/10 rounded-xl p-4 text-sm font-mono text-neutral-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 resize-none placeholder-neutral-600 transition-all"
+                        placeholder='Paste JSON tasks here...'></textarea>
+
+                    <div class="mt-6 space-y-4">
+                        <div>
+                            <label class="text-xs font-medium text-neutral-500 uppercase tracking-wider">Prioritization
+                                Strategy</label>
+                            <div class="relative mt-2">
+                                <select id="sortStrategy"
+                                    class="w-full appearance-none bg-black/30 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 cursor-pointer">
+                                    <option value="smart">Smart Balance (Recommended)</option>
+                                    <option value="fastest">Fastest Wins (Shortest First)</option>
+                                    <option value="impact">High Impact (Importance First)</option>
+                                    <option value="deadline">Deadline Driven (Due Date First)</option>
+                                </select>
+                                <i data-lucide="chevron-down"
+                                    class="absolute right-3 top-3 w-4 h-4 text-neutral-500 pointer-events-none"></i>
+                            </div>
+                        </div>
+
+                        <button id="analyzeBtn"
+                            class="w-full group relative inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold tracking-tight text-white bg-emerald-600 hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-900/20">
+                            <span>Analyze & Prioritize</span>
+                            <i data-lucide="arrow-right"
+                                class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Results -->
+            <div class="lg:col-span-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                        Results
+                    </h2>
+                    <div class="flex bg-white/5 rounded-lg p-1 ring-1 ring-white/10">
+                        <button id="listViewBtn"
+                            class="px-4 py-1.5 text-sm rounded-md transition-all bg-white/10 text-white shadow-sm font-medium">List
+                            View</button>
+                        <button id="matrixViewBtn"
+                            class="px-4 py-1.5 text-sm rounded-md transition-all text-neutral-400 hover:text-white font-medium">Eisenhower
+                            Matrix</button>
+                    </div>
+                </div>
+
+                <!-- List View Container -->
+                <div id="resultsContainer" class="space-y-4 min-h-[400px]">
+                    <div
+                        class="placeholder-text flex flex-col items-center justify-center h-64 text-neutral-600 border border-dashed border-white/10 rounded-2xl bg-white/[0.02]">
+                        <i data-lucide="clipboard-list" class="w-10 h-10 mb-3 opacity-50"></i>
+                        <p>Enter tasks and click Analyze to see results.</p>
+                    </div>
+                </div>
+
+                <!-- Matrix View Container -->
+                <div id="matrixContainer" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 h-[600px]">
+                    <!-- Q1 -->
+                    <div class="quadrant q1 bg-white/[0.02] rounded-xl border border-white/10 p-4 flex flex-col">
+                        <div class="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
+                            <h3 class="text-sm font-bold text-red-400">Do First</h3>
+                            <span class="text-[10px] uppercase tracking-wider text-neutral-500">Urgent &
+                                Important</span>
+                        </div>
+                        <div id="q1-content" class="flex-1 overflow-y-auto space-y-3 pr-2"></div>
+                    </div>
+                    <!-- Q2 -->
+                    <div class="quadrant q2 bg-white/[0.02] rounded-xl border border-white/10 p-4 flex flex-col">
+                        <div class="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
+                            <h3 class="text-sm font-bold text-blue-400">Schedule</h3>
+                            <span class="text-[10px] uppercase tracking-wider text-neutral-500">Not Urgent &
+                                Important</span>
+                        </div>
+                        <div id="q2-content" class="flex-1 overflow-y-auto space-y-3 pr-2"></div>
+                    </div>
+                    <!-- Q3 -->
+                    <div class="quadrant q3 bg-white/[0.02] rounded-xl border border-white/10 p-4 flex flex-col">
+                        <div class="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
+                            <h3 class="text-sm font-bold text-yellow-400">Delegate</h3>
+                            <span class="text-[10px] uppercase tracking-wider text-neutral-500">Urgent & Not
+                                Important</span>
+                        </div>
+                        <div id="q3-content" class="flex-1 overflow-y-auto space-y-3 pr-2"></div>
+                    </div>
+                    <!-- Q4 -->
+                    <div class="quadrant q4 bg-white/[0.02] rounded-xl border border-white/10 p-4 flex flex-col">
+                        <div class="flex items-center justify-between mb-4 pb-2 border-b border-white/5">
+                            <h3 class="text-sm font-bold text-neutral-400">Eliminate</h3>
+                            <span class="text-[10px] uppercase tracking-wider text-neutral-500">Not Urgent & Not
+                                Important</span>
+                        </div>
+                        <div id="q4-content" class="flex-1 overflow-y-auto space-y-3 pr-2"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-7xl mx-auto px-4 sm:px-6 mb-10 border-t border-white/5 pt-8">
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p class="text-xs text-neutral-600">© 2025 Smart Task Analyzer</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // View Toggle Logic (Inline for immediate feedback, but script.js also handles logic)
+        const listBtn = document.getElementById('listViewBtn');
+        const matrixBtn = document.getElementById('matrixViewBtn');
+        const listContainer = document.getElementById('resultsContainer');
+        const matrixContainer = document.getElementById('matrixContainer');
+
+        listBtn.addEventListener('click', () => {
+            listBtn.classList.add('bg-white/10', 'text-white', 'shadow-sm');
+            listBtn.classList.remove('text-neutral-400');
+            matrixBtn.classList.remove('bg-white/10', 'text-white', 'shadow-sm');
+            matrixBtn.classList.add('text-neutral-400');
+
+            listContainer.classList.remove('hidden');
+            matrixContainer.classList.add('hidden');
+        });
+
+        matrixBtn.addEventListener('click', () => {
+            matrixBtn.classList.add('bg-white/10', 'text-white', 'shadow-sm');
+            matrixBtn.classList.remove('text-neutral-400');
+            listBtn.classList.remove('bg-white/10', 'text-white', 'shadow-sm');
+            listBtn.classList.add('text-neutral-400');
+
+            listContainer.classList.add('hidden');
+            matrixContainer.classList.remove('hidden');
+            matrixContainer.classList.add('grid'); // Ensure grid is restored
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>
